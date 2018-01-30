@@ -262,10 +262,19 @@ converters.BinaryExpression = (path, context) => {
 };
 
 converters.MemberExpression = (path, context) => {
+  const object = convert(path.get("object"), context);
+  const property = convert(path.get("property"), context);
+  if (object.kind === 'module') {
+    return {
+      kind: "MemberExpression",
+      object: convert(getExport(object.file, property.name, path), context),
+      property,
+    }
+  }
   return {
     kind: "memberExpression",
-    object: convert(path.get("object"), context),
-    property: convert(path.get("property"), context)
+    object,
+    property,
   };
 };
 
@@ -677,7 +686,6 @@ converters.ObjectTypeSpreadProperty = (path, context) => {
 function importConverterGeneral(path, context) {
   let importKind = path.node.importKind || path.parent.importKind || "value";
   let moduleSpecifier = path.parent.source.value;
-
   if (!path.hub.file.opts.filename) {
     let name = path.node.imported.name;
 
@@ -720,19 +728,33 @@ function importConverterGeneral(path, context) {
       id = path.node.local.name;
     }
 
-    let exported = matchExported(file, name);
-    if (!exported) {
-      let name = `${path.node.imported.name}`;
 
-      return {
-        kind: "import",
-        importKind,
-        name,
-        moduleSpecifier
-      };
-    }
-
+    const exported = getExport(file, name, path);
     return convert(exported, { ...context, replacementId: t.identifier(id) });
+  }
+}
+
+function getExport (file, name, path) {
+  let exported = matchExported(file, name);
+
+  if (!exported) {
+    let name = `${path.node.imported.name}`;
+
+    return {
+      kind: "import",
+      importKind: path.node.importKind || path.parent.importKind || "value",
+      name,
+      moduleSpecifier: path.parent.source.value,
+    };
+  }
+  return exported;
+}
+
+
+converters.ImportNamespaceSpecifier = (path, context) => {
+  return {
+    kind: "module",
+    file: loadImportSync(path.parentPath, context.resolveOptions),
   }
 }
 
@@ -770,6 +792,9 @@ function convert(path, context) {
     throw new Error(
       `Did not pass a NodePath to convert() ${JSON.stringify(path)}`
     );
+  if (!path.type) {
+    throw new Error(`Path does not contain a type`);
+  }
   let converter = converters[path.type];
   if (!converter) throw new Error(`Missing converter for: ${path.type}`);
   let result = converter(path, context);

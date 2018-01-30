@@ -61,6 +61,23 @@ Object {
 }
 `;
 
+exports[`Import Namespace Specifier 1`] = `
+Object {
+  "classes": Array [
+    Object {
+      "kind": "object",
+      "members": Array [],
+      "name": Object {
+        "kind": "id",
+        "name": "Component",
+        "type": null,
+      },
+    },
+  ],
+  "kind": "program",
+}
+`;
+
 exports[`array expression 1`] = `
 Object {
   "classes": Array [
@@ -807,7 +824,7 @@ Object {
               "kind": "generic",
               "value": Object {
                 "importKind": "type",
-                "kind": "import",
+                "kind": "external",
                 "moduleSpecifier": "react",
                 "name": "Node",
               },
@@ -1666,7 +1683,7 @@ Object {
             "kind": "generic",
             "value": Object {
               "importKind": "type",
-              "kind": "import",
+              "kind": "external",
               "moduleSpecifier": "react",
               "name": "Node",
             },
@@ -1724,7 +1741,7 @@ Object {
             "kind": "generic",
             "value": Object {
               "importKind": "type",
-              "kind": "import",
+              "kind": "external",
               "moduleSpecifier": "react",
               "name": "Node",
             },
@@ -1789,7 +1806,7 @@ Object {
             "kind": "generic",
             "value": Object {
               "importKind": "type",
-              "kind": "import",
+              "kind": "external",
               "moduleSpecifier": "react",
               "name": "Node",
             },
@@ -1855,7 +1872,7 @@ Object {
             "kind": "generic",
             "value": Object {
               "importKind": "type",
-              "kind": "import",
+              "kind": "external",
               "moduleSpecifier": "react",
               "name": "Node",
             },

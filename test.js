@@ -697,6 +697,19 @@ const TESTS = [
         }
       }
     `
+  },
+  {
+    name: 'Import Namespace Specifier',
+    typeSystem: "flow",
+    code: `
+      import * as foo from './test-utils/importNamespaceExample';
+
+      class Component extends React.Component<{}> {
+        defaultProps = {
+          a: foo.bar
+        }
+      }
+    `
   }
 ];
 
@@ -713,7 +726,7 @@ for (let testCase of TESTS) {
 
   testFn(testCase.name, () => {
     let code = stripIndent(testCase.code);
-    let result = extractReactTypes(code, testCase.typeSystem);
+    let result = extractReactTypes(code, testCase.typeSystem, 'filename.js');
     expect(result).toMatchSnapshot();
   });
 }
